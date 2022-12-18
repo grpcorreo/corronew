@@ -1,0 +1,252 @@
+//Funciones javascript utilizadas en Preparacion Envios
+
+  function bodyOnLoad() {
+	  
+  }
+
+  function enableCalculadora() {
+	  document.getElementById("myForm:enviar").value="calculadora"; 		
+  }
+  
+  function dameProducto(){
+	  var elementos = document.getElementsByName("myForm:modalidad");
+	  for (i=0; i< elementos.length;i++){ 
+	      	 if (elementos[i].checked) {
+	      	 	var fragmentoTexto = elementos[i].value.split(',');
+	      	 	return fragmentoTexto[2];
+	      	 }
+	   	} 
+  }
+  
+  function dameModalidad(){
+	  var elementos = document.getElementsByName("myForm:modalidad");
+	  for (i=0; i< elementos.length;i++){  
+      	 if (elementos[i].checked) {
+      	 	var fragmentoTexto = elementos[i].value.split(',');
+      	 	return fragmentoTexto[1];
+      	 }
+	  } 
+  }
+  
+  function confirmo(mensaje){
+	  if(confirm(mensaje)){
+   		return true;
+   	}else{
+   		return false;
+   	}
+  }
+  
+  function enableEnvio() {
+	 document.getElementById("myForm:enviar").value="envio";
+	 
+	 var codProducto = dameModalidad();
+	  
+	 if((document.getElementById("myForm:codModalidadAnterior").value != null && document.getElementById("myForm:codModalidadAnterior").value != ""))
+	 {
+		 //En el caso de que el cambio de modalidad sea de oficina por referencia a domicilio o viceversa no se limpian los envíos, por lo que no se emite el mensaje
+		 var domicilio = document.getElementById("myForm:domicilio").value;
+		 var oficinaRef = document.getElementById("myForm:oficinaRef").value;
+		 var modalidadAnterior = document.getElementById("myForm:codModalidadAnterior").value;
+		 
+		 var confirma = true;
+		 if((domicilio!=null && oficinaRef!=null && domicilio == codProducto &&  oficinaRef == modalidadAnterior)
+			 ||
+			 (oficinaRef == codProducto &&  domicilio == modalidadAnterior))
+		 {
+			 confirma = false;
+			 
+		 }	 
+			 
+		 if(confirma && (document.getElementById("myForm:numEnvios").value > 0)&&((codProducto != document.getElementById("myForm:codModalidadAnterior").value))){
+			 return confirmo("Los cambios que ha efectuado provocarán que se eliminen todos los envíos de su pedido de forma permanente. Además, no podrá guardar el estado del pedido hasta que haya introducido al menos un destinatario. ¿Desea continuar?");
+		 }
+	 }
+	 return true;
+  }	
+  
+  function enableRecarga() {
+		 document.getElementById("myForm:enviar").value="recarga";
+  }  
+  
+  function enableRecargaPeso() {
+		 document.getElementById("myForm:enviar").value="recargaPeso";
+  }  
+  
+
+  
+  // Comprueba si el usuario está logado (campo logger del template preContenido)
+  // y si el producto de envío ha cambiado o no, para determinar el comportamiento
+  // del enlace concluirEnvioMasTarde
+  function comprobarConcluirEnvio(mensaje1, mensaje2){
+	  
+	  var retorno = false;
+	  var logado = document.getElementById("logged").value;
+	  // Comprobar login
+	  if (logado == "true"){ //usuario logado
+		  // Comprobar si se ha cambiado el producto de envío
+		  if (dameProducto() == document.getElementById("myForm:codProductoAntiguo").value){
+			  retorno = true;
+		  } else { // el producto ha cambiado
+			  retorno = confirm(mensaje1);
+		  }
+	  } else { // usuario no logado
+		retorno = confirm(mensaje2);
+	  }
+	  return retorno;
+  }
+// Corrige el Bug de IE6 con la Barra de acciones del túnel.
+	function isIE7()
+	{
+		return (document.documentElement && typeof document.documentElement.style.maxHeight!="undefined");
+	}
+	function isIE6()
+	{
+		return (document.compatMode && document.all);
+	}
+	function fixIE6LayoutBug()
+	{
+		if (isIE6() && !isIE7())
+		{
+			var el=document.getElementById('myForm:tunelActionBar');
+			el.style.display='block';
+		}
+	}
+	
+	function gestionarReembolsoEnCuenta(prefixComponentId) {
+   		var checkReembolsoEnCuenta = document.getElementById('myform:' + prefixComponentId + '_DatoEnv_CampoAdic_5');
+   		if (checkReembolsoEnCuenta) {
+	        var entidad = document.getElementById(checkReembolsoEnCuenta.id + '_3');
+   			var oficinaBancaria = document.getElementById(checkReembolsoEnCuenta.id + '_4');
+   			var dc = document.getElementById(checkReembolsoEnCuenta.id + '_5');
+   			var cuenta = document.getElementById(checkReembolsoEnCuenta.id + '_6');
+   			var cuentaIban = document.getElementById(checkReembolsoEnCuenta.id + '_222');
+		    	if(!checkReembolsoEnCuenta.checked) {
+		    		entidad.style.display = 'inline';
+		    		oficinaBancaria.style.display = 'inline';
+		        	dc.style.display = 'inline';
+		        	cuenta.style.display = 'inline';
+		        	cuentaIban.style.display = 'none';
+		        } else {
+			     	var iban = document.getElementById(checkReembolsoEnCuenta.id + '_221');
+					var entidadImg = document.getElementById(checkReembolsoEnCuenta.id + '_3_ImgFail');
+					var entidadMsg = document.getElementById(checkReembolsoEnCuenta.id + '_3_MsgFail');
+		   			var oficinaBancariaImg = document.getElementById(checkReembolsoEnCuenta.id + '_4_ImgFail');
+		   			var oficinaBancariaMsg = document.getElementById(checkReembolsoEnCuenta.id + '_4_MsgFail');
+		   			var dcImg = document.getElementById(checkReembolsoEnCuenta.id + '_5_ImgFail');
+		   			var dcMsg = document.getElementById(checkReembolsoEnCuenta.id + '_5_MsgFail');
+		   			var cuentaImg = document.getElementById(checkReembolsoEnCuenta.id + '_6_ImgFail');
+		   			var cuentaMsg = document.getElementById(checkReembolsoEnCuenta.id + '_6_MsgFail');
+					var cuentaIbanImg = document.getElementById(checkReembolsoEnCuenta.id + '_222_ImgFail');
+					var cuentaIbanMsg = document.getElementById(checkReembolsoEnCuenta.id + '_222_MsgFail');
+					if (!iban || iban.value === '' || (iban.value.length == 4 && iban.value.toUpperCase().substring(0, 2) == 'ES')) {
+			     		entidad.style.display = 'inline';
+						oficinaBancaria.style.display = 'inline';
+			        	dc.style.display = 'inline';
+			        	cuenta.style.display = 'inline';
+			        	cuentaIban.style.display = 'none';
+			        	cuentaIban.value = '';
+						if(cuentaIbanImg){
+							cuentaIbanImg.style.display = 'none';
+						}
+						if(cuentaIbanMsg){
+							cuentaIbanMsg.style.display = 'none';
+						}
+					} else{
+						entidad.style.display = 'none';
+			     		entidad.value = '';
+			     		if(entidadImg){
+			     			entidadImg.style.display = 'none';
+						}
+			        	if(entidadMsg){
+			     			entidadMsg.style.display = 'none';
+						}
+			     		oficinaBancaria.style.display = 'none';
+			     		oficinaBancaria.value = '';
+			     		if(oficinaBancariaImg){
+							oficinaBancariaImg.style.display = 'none';
+						}
+			     		if(oficinaBancariaMsg){
+							oficinaBancariaMsg.style.display = 'none';
+						}
+			        	dc.style.display = 'none';
+			     		dc.value = '';
+			     		if(dcMsg){
+			        		dcMsg.style.display = 'none';
+						}
+			     		if(dcImg){
+			        		dcImg.style.display = 'none';
+						}
+			        	cuenta.style.display = 'none';
+			        	cuenta.value = '';
+			        	if(cuentaImg){
+			        		cuentaImg.style.display = 'none';
+						}
+			        	if(cuentaMsg){
+			        		cuentaMsg.style.display = 'none';
+						}
+			        	cuentaIban.style.display = 'inline';
+					}
+		        }
+			}
+		}
+	
+
+	var slideIndex = 0;
+	showSlides();
+	var myTimeOut;
+	function showSlides() {
+		var slides = document.getElementsByClassName("mySlides");
+		if(slides.length > 0){
+			slides.forEach(function(slide){
+				slide.style.display = "none";
+			});
+			slideIndex++;
+			if (slideIndex > $('.mySlides').length) {slideIndex = 1}   
+			$('.dot').each(function(indice, elemento){
+				elemento.className = elemento.className.replace(" active", "");
+			});
+			if ($('.mySlides')[slideIndex-1] != undefined) {
+				$('.mySlides')[slideIndex-1].style.display = "block";  
+			}
+			if ($('.dot')[slideIndex-1] != undefined) {
+				$('.dot')[slideIndex-1].className += " active";
+			}
+			myTimeOut = setTimeout(showSlides, 5000); // Change image every 5 seconds
+		}
+	}
+
+		function currentSlide(n) {
+			slideIndex = n-1;
+			clearTimeout(myTimeOut);
+		  showSlides();
+		}
+
+		function seleccionarMedida(opt, btn) {
+			if (opt != '' && opt != 'undefined') {
+				$.post('/OV2PREENVWEB/jsp/preenv/cargarLocalidadesCodigosPostales.jsp', {medida: opt, realizarAccion : "cargarMedidaFrio"}, function(data) {
+					var resultado = $.trim(data);
+					var medidas = resultado.split(";");
+					if (medidas.length >= 4) {
+						document.getElementById("msgErrMedPFrio").style.display = 'none';
+						$(".btn_bfm").attr('class','botonatras btn_bfm');
+						$(btn).attr('class','button2 btn_bfm');
+						
+						var alto = (medidas[0]/10) + "";
+						var ancho = (medidas[1]/10) + "";
+						var largo = (medidas[2]/10) + "";
+						var peso = medidas[3].replace(".",",");
+						document.getElementById("myform:inputAlto").value = alto.replace(".",",");
+						document.getElementById("myform:inputAncho").value = ancho.replace(".",",");
+						document.getElementById("myform:inputProfundo").value = largo.replace(".",",");
+						document.getElementById("myform:compDatos_DatoEnv_CampoAdic__5_16").value = peso;
+						document.getElementById("myform:fmv_btn").value = opt;
+						
+						// Volumen
+						calcularPeso();
+						//document.getElementById("myform:TcompDatos_DatoEnv_CampoAdic__5_17").value = peso;
+					} else {
+						document.getElementById("msgErrMedPFrio").style.display = 'block';
+					}
+				});
+			}
+		}

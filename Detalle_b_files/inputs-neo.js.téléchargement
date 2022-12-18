@@ -1,0 +1,16 @@
+window.onload = function() {
+	var listInputs = document.querySelectorAll('.form-input-neo');
+	for(var i = 0; i<listInputs.length;i++) {
+		listInputs[i].placeholder=' ';
+	}
+
+	var listErrores = document.querySelectorAll('.msg-error');
+	var panelError = document.getElementById('panel-errores');
+	if(panelError != undefined || panelError != null) {
+		if(listErrores.length > 0) {
+			panelError.style.display='flex';
+		} else {
+			panelError.style.display='none';
+		}
+	}
+}
